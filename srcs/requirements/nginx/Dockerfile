@@ -10,8 +10,8 @@ EXPOSE 443
 COPY ./conf/default /etc/nginx/sites-enabled/default
 
 # Copy the start script and make it executable
-COPY ./tools/nginx-run.sh /var/www/nginx-run.sh
-RUN chmod +x /var/www/nginx-run.sh
+COPY ./tools/nginx-run.sh /usr/bin/nginx-run.sh
+RUN chmod +x /usr/bin/nginx-run.sh
 
 # Run the start script
-CMD ["/var/www/nginx-run.sh"]
+CMD ["/usr/bin/nginx-run.sh"]

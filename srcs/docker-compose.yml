@@ -1,18 +1,65 @@
+version: "3.5"
+
+networks:
+  inception:
+    name: inception
+
+volumes:
+  wp:
+    driver: local # Use local storage for the WordPress volume.
+    name: wp # Custom volume name for consistency.
+    driver_opts:
+      type: none # Bind a host directory as the volume.
+      o: bind # Mount as a bind volume for host-container data synchronization.
+      device: /$HOME/data/wordpress # Host directory for WordPress data.
+  db:
+    driver: local # Use local storage for the MariaDB volume.
+    name: db # Custom volume name for consistency.
+    driver_opts:
+      type: none # Bind a host directory as the volume.
+      o: bind # Mount as a bind volume for host-container data synchronization.
+      device: /$HOME/data/mariadb # Host directory for database data.
+
 services:
+  mariadb:
+    container_name: mariadb
+    build: ./requirements/mariadb
+    ports:
+      - "3306:3306"
+    env_file:
+      - .env
+    volumes:
+      - db:/var/lib/mysql
+    networks:
+      - inception
+    restart: unless-stopped
+
   wordpress:
     container_name: wordpress
     build: ./requirements/wordpress
     env_file:
       - .env
+    depends_on:
+      - mariadb
+    ports:
+      - "443:80"
+    volumes:
+      - wp:/var/www/html
+    networks:
+      - inception
     restart: unless-stopped
 
   nginx:
     container_name: nginx
     build: ./requirements/nginx # build the image from the Dockerfile in the nginx directory
     ports: # expose the container's ports to the host
-      - 443:443
+      - "443:443"
     env_file:
       - .env
     depends_on:
       - wordpress
+    volumes:
+      - wp:/var/www/html
+    networks:
+      - inception
     restart: unless-stopped # restart the container unless it was explicitly stopped
