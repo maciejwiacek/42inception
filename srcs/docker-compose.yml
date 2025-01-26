@@ -1,0 +1,18 @@
+services:
+  wordpress:
+    container_name: wordpress
+    build: ./requirements/wordpress
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  nginx:
+    container_name: nginx
+    build: ./requirements/nginx # build the image from the Dockerfile in the nginx directory
+    ports: # expose the container's ports to the host
+      - 443:443
+    env_file:
+      - .env
+    depends_on:
+      - wordpress
+    restart: unless-stopped # restart the container unless it was explicitly stopped
