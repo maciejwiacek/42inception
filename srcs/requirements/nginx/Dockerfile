@@ -1,17 +1,8 @@
 FROM debian:buster
 
-# Intall nginx and openssl
-RUN apt update && apt install -y nginx openssl
+RUN apt update && apt upgrade -y && apt install -y \
+    nginx
 
-# Expose port 443 for HTTPS traffic
-EXPOSE 443
+COPY ./conf/default /etc/nginx/sites-available/.
 
-# Copy the configuration files and the script to start the server
-COPY ./conf/default /etc/nginx/sites-enabled/default
-
-# Copy the start script and make it executable
-COPY ./tools/nginx-run.sh /usr/bin/nginx-run.sh
-RUN chmod +x /usr/bin/nginx-run.sh
-
-# Run the start script
-CMD ["/usr/bin/nginx-run.sh"]
+CMD [ "nginx", "-g", "daemon off;" ]

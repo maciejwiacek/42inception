@@ -1,12 +1,12 @@
 FROM debian:buster
 
-RUN apt-get update && apt-get install -y mariadb-server
+RUN apt update && apt upgrade -y && apt install -y \
+    mariadb-server
 
-EXPOSE 3306
+COPY ./conf/50-server.cnf /etc/mysql/mariadb.conf.d/.
+COPY ./tools/init.sql /etc/mysql/init.sql
+COPY ./tools/script.sh .
 
-COPY ./config/50-server.cnf /etc/mysql/mariadb.conf.d/
+RUN mkdir /run/mysqld && chmod +x script.sh
 
-COPY ./tools/mariadb-run.sh /usr/bin/mariadb-run.sh
-RUN chmod +x /usr/bin/mariadb-run.sh
-
-CMD ["/usr/bin/mariadb-run.sh"]
+CMD [ "./script.sh" ]
