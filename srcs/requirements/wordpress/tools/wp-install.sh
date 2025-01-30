@@ -13,17 +13,24 @@ if [ ! -f /var/www/html/wp-config.php ]; then
 
     wp config create \
         --dbname=wordpress \
-        --dbuser=wpuser \
-        --dbpass=password \
+        --dbuser=$ADMIN_LOGIN \
+        --dbpass=$ADMIN_PASSWORD \
         --dbhost=mariadb \
         --allow-root
 
     wp core install \
-        --url=localhost \
+        --url=mwiacek.42.fr \
         --title=inception \
-        --admin_user=admin \
-        --admin_password=admin \
-        --admin_email=admin@admin.com \
+        --admin_user=$ADMIN_LOGIN \
+        --admin_password=$ADMIN_PASSWORD \
+        --admin_email=$ADMIN_EMAIL \
+        --allow-root
+
+    wp user create \
+        $USER_LOGIN \
+        $USER_EMAIL \
+        --role=author \
+        --user_pass=$USER_PASSWORD \
         --allow-root
 
     wp theme install twentytwentyfour --activate --allow-root

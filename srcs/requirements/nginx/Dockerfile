@@ -2,12 +2,11 @@ FROM debian:buster
 
 RUN apt update && apt upgrade -y && apt install -y \
     nginx \
-    openssl && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+    openssl
 
 EXPOSE 443
 
-COPY ./conf/default /etc/nginx/sites-enabled/.
+COPY ./conf/default /etc/nginx/sites-enabled/default
 
 COPY ./tools/script.sh .
 RUN chmod +x script.sh
